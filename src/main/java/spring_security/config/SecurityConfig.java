@@ -34,16 +34,28 @@ public class SecurityConfig {
         http.authorizeRequests()
             .antMatchers("/webjars/**", "/css/**", "/js/**", "/image/**").permitAll()
             .antMatchers("/", "/home").permitAll()
-            .anyRequest().authenticated()
-            .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/login-error")
-                .permitAll()
-            .and()
-                .logout()
-                .logoutSuccessUrl("/");
+
+                .antMatchers("/u/**").hasAuthority("ADMIN")
+                .antMatchers("/medicos/**").hasAuthority("MEDICO")
+                .antMatchers("/especialidades/**").hasAuthority("ADMIN")
+                .anyRequest().authenticated()
+
+                //Mapeando login
+                .and()
+                    .formLogin()
+                    .loginPage("/login")
+                    .defaultSuccessUrl("/", true)
+                    .failureUrl("/login-error")
+                    .permitAll()
+                //Mapeando logout
+                .and()
+                    .logout()
+                    .logoutSuccessUrl("/")
+                //Mapeando Erros
+                .and()
+                    .exceptionHandling()
+                    .accessDeniedPage("/acesso-negado");
+
         return http.build();
     }
 
