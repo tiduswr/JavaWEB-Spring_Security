@@ -15,6 +15,7 @@ import spring_security.datatables.DatatablesColunas;
 import spring_security.domain.Perfil;
 import spring_security.domain.Usuario;
 import spring_security.repository.UsuarioRepository;
+import spring_security.web.exception.UserNotFound;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -76,7 +77,8 @@ public class UsuarioService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public Usuario buscarPorIdEPerfis(Long userID, Long[] perfisId) {
-        return repo.findByIdAndPerfis(userID, perfisId);
+    public Usuario buscarPorIdEPerfis(Long userID) throws UserNotFound{
+        return repo.findByIdAndPerfis(userID)
+                .orElseThrow(() -> new UserNotFound("Usuário inexistente!"));
     }
 }

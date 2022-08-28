@@ -41,9 +41,18 @@ public class SecurityConfig {
             .antMatchers("/webjars/**", "/css/**", "/js/**", "/image/**").permitAll()
             .antMatchers("/", "/home").permitAll()
 
+                //ADMIN
                 .antMatchers("/u/**").hasAuthority(ADMIN)
-                .antMatchers("/medicos/**").hasAuthority(MEDICO)
                 .antMatchers("/especialidades/**").hasAuthority(ADMIN)
+
+                //MEDICO
+                .antMatchers("/medicos/dados", "/medicos/salvar", "/medicos/editar")
+                    /*É necessário informar Medico e ADMIN porque se informar apenas um,
+                    o SPRING vai bloquear essas URLS para todos os outros perfis*/
+                    .hasAnyAuthority(MEDICO, ADMIN)
+                .antMatchers("/medicos/**").hasAuthority(MEDICO)
+
+                //PACIENTE
                 .antMatchers("/pacientes/**").hasAuthority(PACIENTE)
                 .anyRequest().authenticated()
 

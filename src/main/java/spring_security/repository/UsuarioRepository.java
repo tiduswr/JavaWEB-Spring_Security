@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import spring_security.domain.Usuario;
 
+import java.util.Optional;
+
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("SELECT u FROM Usuario u WHERE u.email like :email")
@@ -19,6 +21,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("SELECT DISTINCT u FROM Usuario u " +
             "JOIN u.perfis p " +
-            "WHERE u.id = :userID AND p.id = :perfisId")
-    Usuario findByIdAndPerfis(@Param("userID") Long userID, @Param("perfisID") Long[] perfisID);
+            "WHERE u.id = :userID")
+    Optional<Usuario> findByIdAndPerfis(@Param("userID") Long userID);
 }

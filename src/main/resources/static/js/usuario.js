@@ -21,11 +21,11 @@ $(document).ready(function (){
             },
             {data : "perfis",
                 render : function(perfis){
-                    var aux = new Array();
+                    var aux = [];
                     $.each(perfis, function(index, value){
                         aux.push(value.desc);
                     });
-                    return aux;
+                    return aux.join(", ");
                 },
                 orderable : false
             },
@@ -40,7 +40,8 @@ $(document).ready(function (){
             },
             {	data : 'id',	
                 render : function(id) {
-                    return ''.concat('<a class="btn btn-info btn-sm btn-block"', ' ') 
+                    return ''.concat('<a class="btn btn-info btn-sm btn-block"', ' ')
+                                .concat('href="').concat('/u/editar/dados/usuario/').concat(id, '"', ' ')  
                                 .concat('id="dp_').concat(id).concat('"', ' ') 
                                 .concat('role="button" title="Editar" data-toggle="tooltip" data-placement="right">', ' ')
                                 .concat('<i class="fas fa-edit"></i></a>');
@@ -49,4 +50,5 @@ $(document).ready(function (){
             }
         ]
     });
+
 })
