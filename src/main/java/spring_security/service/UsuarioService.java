@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring_security.datatables.Datatables;
@@ -18,6 +19,7 @@ import spring_security.repository.UsuarioRepository;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UsuarioService implements UserDetailsService {
@@ -59,5 +61,22 @@ public class UsuarioService implements UserDetailsService {
                 repo.findAll(datatables.getPageable()) :
                 repo.findByEmailOrPerfil(datatables.getSearch(), datatables.getPageable());
         return datatables.getResponse(page);
+    }
+
+    @Transactional(readOnly = false)
+    public void salvarUsuario(Usuario user) {
+        String crypt = new BCryptPasswordEncoder().encode(user.getSenha());
+        user.setSenha(crypt);
+        repo.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Usuario> buscarPorId(Long id) {
+        return repo.findById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario buscarPorIdEPerfis(Long userID, Long[] perfisId) {
+        return repo.findByIdAndPerfis(userID, perfisId);
     }
 }

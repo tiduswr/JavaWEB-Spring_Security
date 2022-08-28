@@ -11,6 +11,10 @@ public enum PerfilTipo {
 		this.desc = desc;
 	}
 
+	public Perfil buildPerfil(){
+		return new Perfil(cod, desc);
+	}
+
 	public long getCod() {
 		return cod;
 	}
