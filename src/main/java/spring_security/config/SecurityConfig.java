@@ -43,6 +43,7 @@ public class SecurityConfig {
 
                 //ADMIN
                 .antMatchers("/u/**").hasAuthority(ADMIN)
+                .antMatchers("/especialidades/titulo").hasAnyAuthority(ADMIN, MEDICO)
                 .antMatchers("/especialidades/**").hasAuthority(ADMIN)
 
                 //MEDICO

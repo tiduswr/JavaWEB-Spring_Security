@@ -33,4 +33,10 @@ public class MedicoService {
             persistentMedico.getEspecialidades().addAll(medico.getEspecialidades());
         medicoRepository.save(persistentMedico);
     }
+
+    @Transactional(readOnly = true)
+    public Medico buscarPorEmail(String username) {
+        return medicoRepository.findMedicoByEmail(username).
+                orElse(new Medico());
+    }
 }

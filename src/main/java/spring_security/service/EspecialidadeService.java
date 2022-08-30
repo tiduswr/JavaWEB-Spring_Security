@@ -10,8 +10,7 @@ import spring_security.domain.Especialidade;
 import spring_security.repository.EspecialidadeRepository;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class EspecialidadeService {
@@ -44,5 +43,15 @@ public class EspecialidadeService {
     @Transactional(readOnly = false)
     public void excluirPorID(Long id) {
         repo.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> buscarEspecialidadeByTermo(String termo) {
+        return repo.findEspecialidadesByTermo(termo);
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Especialidade> buscarPorTitulos(String[] source) {
+        return repo.findByTitulos(source);
     }
 }
