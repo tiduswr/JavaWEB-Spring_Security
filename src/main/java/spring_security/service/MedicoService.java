@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import spring_security.domain.Medico;
 import spring_security.repository.MedicoRepository;
 
+import java.util.Optional;
+
 @Service
 public class MedicoService {
 
@@ -38,5 +40,15 @@ public class MedicoService {
     public Medico buscarPorEmail(String username) {
         return medicoRepository.findMedicoByEmail(username).
                 orElse(new Medico());
+    }
+
+    @Transactional(readOnly = false)
+    public void excluirEspecialidadePorMedico(Long idMed, Long idEsp) {
+        Optional<Medico> medico = medicoRepository.findById(idMed);
+        if(medico.isPresent()){
+            Medico medicoPersitente = medico.get();
+            medicoPersitente.getEspecialidades().removeIf(e -> e.getId().equals(idEsp));
+            medicoRepository.save(medicoPersitente);
+        }
     }
 }
