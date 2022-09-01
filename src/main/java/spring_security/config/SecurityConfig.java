@@ -42,7 +42,7 @@ public class SecurityConfig {
             .antMatchers("/", "/home").permitAll()
 
                 //ADMIN
-                .antMatchers("/u/editar/senha", "/u/confirmar/senha").hasAuthority(MEDICO)
+                .antMatchers("/u/editar/senha", "/u/confirmar/senha").hasAnyAuthority(PACIENTE, MEDICO)
                 .antMatchers("/u/**").hasAuthority(ADMIN)
                 .antMatchers("/especialidades/datatables/server/medico/*").hasAnyAuthority(ADMIN, MEDICO)
                 .antMatchers("/especialidades/titulo").hasAnyAuthority(ADMIN, MEDICO)
