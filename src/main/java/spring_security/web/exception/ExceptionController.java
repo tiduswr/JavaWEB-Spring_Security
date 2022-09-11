@@ -26,4 +26,13 @@ public class ExceptionController {
         return error;
     }
 
+    @ExceptionHandler(AcessoNegadoException.class)
+    public ModelAndView acessoNegadoException(AcessoNegadoException e){
+        ModelAndView error = new ModelAndView("error");
+        error.addObject("status", HttpStatus.FORBIDDEN.value());
+        error.addObject("error", "Área Restrita!");
+        error.addObject("message", e.getMessage());
+        return error;
+    }
+
 }

@@ -5,16 +5,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import spring_security.domain.Perfil;
 import spring_security.domain.PerfilTipo;
 import spring_security.service.UsuarioService;
 
 @Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true) //Ativa a opção de comentar metodos para determinados perfis
 @EnableWebSecurity
 public class SecurityConfig {
 
@@ -49,7 +50,7 @@ public class SecurityConfig {
                 .antMatchers("/especialidades/**").hasAuthority(ADMIN)
 
                 //MEDICO
-                .antMatchers("/medicos/especialidade/titulo/*").hasAuthority(PACIENTE)
+                .antMatchers("/medicos/especialidade/titulo/*").hasAnyAuthority(PACIENTE, MEDICO)
                 .antMatchers("/medicos/dados", "/medicos/salvar", "/medicos/editar")
                     /*É necessário informar Medico e ADMIN porque se informar apenas um,
                     o SPRING vai bloquear essas URLS para todos os outros perfis*/

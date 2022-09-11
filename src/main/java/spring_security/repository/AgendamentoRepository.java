@@ -11,6 +11,7 @@ import spring_security.repository.projection.HistoricoPaciente;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> {
     @Query("SELECT h FROM Horario h " +
@@ -31,4 +32,9 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
             "a.medico as medico, a.especialidade as especialidade FROM Agendamento a " +
             "WHERE a.medico.usuario.email LIKE :email")
     Page<HistoricoPaciente> findHistoricoByMedicoEmail(String email, Pageable pageable);
+
+    @Query("SELECT a FROM Agendamento a " +
+            "WHERE (a.id = :id AND a.paciente.usuario.email LIKE :email) " +
+            "OR (a.id = :id AND a.medico.usuario.email LIKE :email)")
+    Optional<Agendamento> fidByIdAndPacienteOrMedicoEmail(@Param("id") Long id, @Param("email") String email);
 }
