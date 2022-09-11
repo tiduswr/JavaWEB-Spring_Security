@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring_security.domain.Medico;
 import spring_security.repository.MedicoRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,5 +51,10 @@ public class MedicoService {
             medicoPersitente.getEspecialidades().removeIf(e -> e.getId().equals(idEsp));
             medicoRepository.save(medicoPersitente);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<Medico> buscarMedicosPorEspecialidade(String titulo) {
+        return medicoRepository.findMedicosByEspecialidade(titulo);
     }
 }

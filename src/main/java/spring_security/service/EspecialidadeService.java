@@ -62,4 +62,9 @@ public class EspecialidadeService {
         Page<Especialidade> especialidades = repo.findByIdMedico(id, datatables.getPageable());
         return datatables.getResponse(especialidades);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<Especialidade> buscarPorTitulo(String titulo) {
+        return repo.getEspecialidadeByTitulo(titulo);
+    }
 }

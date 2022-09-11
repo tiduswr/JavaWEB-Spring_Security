@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import spring_security.domain.Especialidade;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface EspecialidadeRepository extends JpaRepository<Especialidade, Long> {
@@ -24,4 +25,7 @@ public interface EspecialidadeRepository extends JpaRepository<Especialidade, Lo
             "JOIN e.medicos m " +
             "WHERE m.id = :id")
     Page<Especialidade> findByIdMedico(@Param("id") Long id, Pageable pageable);
+
+    @Query("SELECT e FROM Especialidade e WHERE e.titulo = :titulo")
+    Optional<Especialidade> getEspecialidadeByTitulo(@Param("titulo") String titulo);
 }
