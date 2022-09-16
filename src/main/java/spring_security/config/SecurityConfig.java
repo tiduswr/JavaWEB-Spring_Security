@@ -41,6 +41,7 @@ public class SecurityConfig {
         http.authorizeRequests()
             .antMatchers("/webjars/**", "/css/**", "/js/**", "/image/**").permitAll()
             .antMatchers("/", "/home").permitAll()
+            .antMatchers("/u/novo/cadastro","/u/cadastro/realizado","/u/cadastro/paciente/salvar").permitAll()
 
                 //ADMIN
                 .antMatchers("/u/editar/senha", "/u/confirmar/senha").hasAnyAuthority(PACIENTE, MEDICO)

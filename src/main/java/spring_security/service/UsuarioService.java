@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import spring_security.datatables.Datatables;
 import spring_security.datatables.DatatablesColunas;
 import spring_security.domain.Perfil;
+import spring_security.domain.PerfilTipo;
 import spring_security.domain.Usuario;
 import spring_security.repository.UsuarioRepository;
 import spring_security.web.exception.UserNotFound;
@@ -38,7 +39,8 @@ public class UsuarioService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario user = buscarPorEmail(username);
+        Usuario user = buscarPorEmailEAtivo(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario " + username + " não encontrado/ativo!"));
         return new User(
                 user.getEmail(),
                 user.getSenha(),
@@ -91,4 +93,18 @@ public class UsuarioService implements UserDetailsService {
         user.setSenha(new BCryptPasswordEncoder().encode(senha));
         repo.save(user);
     }
+
+    @Transactional(readOnly = false)
+    public void salvarCadastroPaciente(Usuario user) {
+        String crypt = new BCryptPasswordEncoder().encode(user.getSenha());
+        user.setSenha(crypt);
+        user.addPerfil(PerfilTipo.PACIENTE);
+        repo.save(user);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Usuario> buscarPorEmailEAtivo(String email){
+        return repo.findByEmailAndAtivo(email);
+    }
+
 }
