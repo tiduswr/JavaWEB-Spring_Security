@@ -19,6 +19,7 @@ import spring_security.service.UsuarioService;
 import spring_security.web.exception.RestrictedArea;
 import spring_security.web.exception.UserNotFound;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
@@ -149,7 +150,7 @@ public class UsuarioController {
     }
 
     @PostMapping("/cadastro/paciente/salvar")
-    public String salvarCadastroPaciente(Usuario user, BindingResult result){
+    public String salvarCadastroPaciente(Usuario user, BindingResult result) throws MessagingException {
         try{
             service.salvarCadastroPaciente(user);
         }catch(DataIntegrityViolationException ex){
@@ -159,4 +160,16 @@ public class UsuarioController {
         return "redirect:/u/cadastro/realizado";
     }
 
+    @GetMapping("/confirmacao/cadastro")
+    public String respostaConfirmacaoCadastrPaciente(@RequestParam("codigo") String codigo, RedirectAttributes attr){
+
+        service.ativarCadastroPaciente(codigo);
+
+        attr.addFlashAttribute("alerta", "sucesso");
+        attr.addFlashAttribute("titulo", "Cadastro Ativado!");
+        attr.addFlashAttribute("texto", "Parabéns, seu cadastro está ativo!");
+        attr.addFlashAttribute("subtexto", "Siga com seu login/senha");
+
+        return "redirect:/login";
+    }
 }

@@ -2,7 +2,7 @@ package spring_security.web.util;
 
 public enum ThisApplication {
 
-    BASE_URL("http://localhost:8080/");
+    BASE_URL("http://localhost:8080");
 
     private final String value;
 

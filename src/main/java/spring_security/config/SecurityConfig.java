@@ -39,10 +39,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configureFilterChain(HttpSecurity http) throws Exception{
         http.authorizeRequests()
-            .antMatchers("/webjars/**", "/css/**", "/js/**", "/image/**").permitAll()
-            .antMatchers("/", "/home").permitAll()
-            .antMatchers("/u/novo/cadastro","/u/cadastro/realizado","/u/cadastro/paciente/salvar").permitAll()
-
+                //PUBLICO
+                .antMatchers("/webjars/**", "/css/**", "/js/**", "/image/**").permitAll()
+                .antMatchers("/", "/home").permitAll()
+                .antMatchers("/u/novo/cadastro","/u/cadastro/realizado"
+                        ,"/u/cadastro/paciente/salvar","/u/confirmacao/cadastro").permitAll()
                 //ADMIN
                 .antMatchers("/u/editar/senha", "/u/confirmar/senha").hasAnyAuthority(PACIENTE, MEDICO)
                 .antMatchers("/u/**").hasAuthority(ADMIN)
