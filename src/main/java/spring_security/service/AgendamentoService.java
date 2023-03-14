@@ -12,7 +12,7 @@ import spring_security.repository.AgendamentoRepository;
 import spring_security.repository.projection.HistoricoPaciente;
 import spring_security.web.exception.AcessoNegadoException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;

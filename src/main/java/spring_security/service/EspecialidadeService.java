@@ -9,7 +9,7 @@ import spring_security.datatables.DatatablesColunas;
 import spring_security.domain.Especialidade;
 import spring_security.repository.EspecialidadeRepository;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Service

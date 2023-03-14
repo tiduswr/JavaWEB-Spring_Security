@@ -1,12 +1,11 @@
 package spring_security.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.session.SessionRegistry;
@@ -21,7 +20,7 @@ import spring_security.domain.PerfilTipo;
 import spring_security.service.UsuarioService;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true) //Ativa a opção de comentar metodos para determinados perfis
+@EnableMethodSecurity
 @EnableWebSecurity
 public class SecurityConfig {
 
@@ -29,12 +28,15 @@ public class SecurityConfig {
     private static final String MEDICO = PerfilTipo.MEDICO.getDesc();
     private static final String PACIENTE = PerfilTipo.PACIENTE.getDesc();
 
-    @Autowired
-    private UsuarioService userServ;
-
     @Bean
-    public AuthenticationManager configureAuthentication(AuthenticationConfiguration auth) throws Exception{
-        return auth.getAuthenticationManager();
+    public AuthenticationManager configureAuthentication(HttpSecurity http,
+                                                         PasswordEncoder passwordEncoder,
+                                                         UsuarioService userDetailService) throws Exception{
+
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .userDetailsService(userDetailService)
+                .passwordEncoder(passwordEncoder)
+                .and().build();
     }
 
     @Bean
@@ -59,42 +61,44 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain configureFilterChain(HttpSecurity http) throws Exception{
-        http.authorizeRequests()
+        http.authorizeHttpRequests((authorize) ->
+                authorize
                 //PUBLICO
-                .antMatchers("/webjars/**", "/css/**", "/js/**", "/image/**").permitAll()
-                .antMatchers("/", "/home").permitAll()
-                .antMatchers("/u/novo/cadastro","/u/cadastro/realizado"
+                .requestMatchers("/webjars/**", "/css/**", "/js/**", "/image/**").permitAll()
+                .requestMatchers("/", "/home").permitAll()
+                .requestMatchers("/u/novo/cadastro","/u/cadastro/realizado"
                         ,"/u/cadastro/paciente/salvar","/u/confirmacao/cadastro", "/u/p/**", "/expired").permitAll()
                 //ADMIN
-                .antMatchers("/u/editar/senha", "/u/confirmar/senha").hasAnyAuthority(PACIENTE, MEDICO)
-                .antMatchers("/u/**").hasAuthority(ADMIN)
-                .antMatchers("/especialidades/datatables/server/medico/*").hasAnyAuthority(ADMIN, MEDICO)
-                .antMatchers("/especialidades/titulo").hasAnyAuthority(ADMIN, MEDICO, PACIENTE)
-                .antMatchers("/especialidades/**").hasAuthority(ADMIN)
+                .requestMatchers("/u/editar/senha", "/u/confirmar/senha").hasAnyAuthority(PACIENTE, MEDICO)
+                .requestMatchers("/u/**").hasAuthority(ADMIN)
+                .requestMatchers("/especialidades/datatables/server/medico/*").hasAnyAuthority(ADMIN, MEDICO)
+                .requestMatchers("/especialidades/titulo").hasAnyAuthority(ADMIN, MEDICO, PACIENTE)
+                .requestMatchers("/especialidades/**").hasAuthority(ADMIN)
 
                 //MEDICO
-                .antMatchers("/medicos/especialidade/titulo/*").hasAnyAuthority(PACIENTE, MEDICO)
-                .antMatchers("/medicos/dados", "/medicos/salvar", "/medicos/editar")
+                .requestMatchers("/medicos/especialidade/titulo/*").hasAnyAuthority(PACIENTE, MEDICO)
+                .requestMatchers("/medicos/dados", "/medicos/salvar", "/medicos/editar")
                     /*É necessário informar Medico e ADMIN porque se informar apenas um,
                     o SPRING vai bloquear essas URLS para todos os outros perfis*/
                     .hasAnyAuthority(MEDICO, ADMIN)
-                .antMatchers("/medicos/**").hasAuthority(MEDICO)
+                .requestMatchers("/medicos/**").hasAuthority(MEDICO)
 
                 //PACIENTE
-                .antMatchers("/pacientes/**").hasAuthority(PACIENTE)
-                .anyRequest().authenticated()
+                .requestMatchers("/pacientes/**").hasAuthority(PACIENTE)
+                .anyRequest().authenticated())
 
                 //Mapeando login
-                .and()
-                    .formLogin()
-                    .loginPage("/login")
-                    .defaultSuccessUrl("/", true)
-                    .failureUrl("/login-error")
-                    .permitAll()
+                .formLogin()
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login-error")
+                .permitAll()
+
                 //Mapeando logout
                 .and()
                     .logout()
                     .logoutSuccessUrl("/")
+
                 //Mapeando Erros
                 .and()
                     .exceptionHandling()

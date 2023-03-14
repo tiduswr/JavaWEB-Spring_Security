@@ -21,8 +21,8 @@ import spring_security.service.UsuarioService;
 import spring_security.web.exception.RestrictedArea;
 import spring_security.web.exception.UserNotFound;
 
-import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

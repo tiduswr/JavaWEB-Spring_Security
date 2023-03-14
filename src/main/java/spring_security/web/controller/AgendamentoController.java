@@ -22,7 +22,7 @@ import spring_security.service.AgendamentoService;
 import spring_security.service.EspecialidadeService;
 import spring_security.service.PacienteService;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.Optional;
 

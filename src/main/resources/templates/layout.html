@@ -25,7 +25,7 @@
 </head>
 
 <body>
-	<nav th:replace="fragments/header :: cabecalho">
+	<nav th:replace="~{fragments/header :: cabecalho}">
 		<div>header</div>
 	</nav>
 
@@ -35,11 +35,11 @@
 		</section>
 	</div>
 
-	<footer th:replace="fragments/footer :: rodape">
+	<footer th:replace="~{fragments/footer :: rodape}">
 		<div>footer</div>
 	</footer>
 
-	<span th:replace="fragments/modal-confirm :: modal-confirm"></span>
+	<span th:replace="~{fragments/modal-confirm :: modal-confirm}"></span>
 
 	<!-- Bootstrap core JavaScript
     ================================================== -->
@@ -56,8 +56,8 @@
 	<script src="https://cdn.datatables.net/responsive/2.2.1/js/dataTables.responsive.min.js"></script>
 	
 	<!-- 	MEUS JS -->
-	<script th:replace=":: js"></script>
-	<script th:replace=":: inlinescript" th:inline="javascript"></script>
+	<script th:replace="~{:: js}"></script>
+	<script th:replace="~{:: inlinescript}" th:inline="javascript"></script>
 
 	<script type="text/javascript">
 		$(function () {

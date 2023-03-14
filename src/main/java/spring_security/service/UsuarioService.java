@@ -21,8 +21,8 @@ import spring_security.web.exception.AcessoNegadoException;
 import spring_security.web.exception.UserNotFound;
 import spring_security.web.util.RandomAlphanumeric;
 
-import javax.mail.MessagingException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
