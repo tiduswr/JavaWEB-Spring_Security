@@ -1,6 +1,7 @@
 package spring_security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,9 +9,14 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import spring_security.domain.PerfilTipo;
 import spring_security.service.UsuarioService;
 
@@ -32,6 +38,21 @@ public class SecurityConfig {
     }
 
     @Bean
+    public SessionRegistry sessionRegistry(){
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    public ServletListenerRegistrationBean<?> servletListenerRegistrationBean(){
+        return new ServletListenerRegistrationBean<>(new HttpSessionEventPublisher());
+    }
+
+    @Bean
+    public SessionAuthenticationStrategy sessionAuthStrategy(){
+        return new RegisterSessionAuthenticationStrategy(sessionRegistry());
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
@@ -43,7 +64,7 @@ public class SecurityConfig {
                 .antMatchers("/webjars/**", "/css/**", "/js/**", "/image/**").permitAll()
                 .antMatchers("/", "/home").permitAll()
                 .antMatchers("/u/novo/cadastro","/u/cadastro/realizado"
-                        ,"/u/cadastro/paciente/salvar","/u/confirmacao/cadastro", "/u/p/**").permitAll()
+                        ,"/u/cadastro/paciente/salvar","/u/confirmacao/cadastro", "/u/p/**", "/expired").permitAll()
                 //ADMIN
                 .antMatchers("/u/editar/senha", "/u/confirmar/senha").hasAnyAuthority(PACIENTE, MEDICO)
                 .antMatchers("/u/**").hasAuthority(ADMIN)
@@ -79,6 +100,16 @@ public class SecurityConfig {
                     .exceptionHandling()
                     .accessDeniedPage("/acesso-negado")
                 .and().rememberMe();
+
+        http.sessionManagement()
+                .maximumSessions(1)
+                .expiredUrl("/expired")
+                .maxSessionsPreventsLogin(false)
+                .sessionRegistry(sessionRegistry());
+
+        http.sessionManagement()
+                .sessionFixation().newSession()
+                .sessionAuthenticationStrategy(sessionAuthStrategy());
 
         return http.build();
     }
