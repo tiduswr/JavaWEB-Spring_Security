@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .antMatchers("/webjars/**", "/css/**", "/js/**", "/image/**").permitAll()
                 .antMatchers("/", "/home").permitAll()
                 .antMatchers("/u/novo/cadastro","/u/cadastro/realizado"
-                        ,"/u/cadastro/paciente/salvar","/u/confirmacao/cadastro").permitAll()
+                        ,"/u/cadastro/paciente/salvar","/u/confirmacao/cadastro", "/u/p/**").permitAll()
                 //ADMIN
                 .antMatchers("/u/editar/senha", "/u/confirmar/senha").hasAnyAuthority(PACIENTE, MEDICO)
                 .antMatchers("/u/**").hasAuthority(ADMIN)
@@ -77,7 +77,8 @@ public class SecurityConfig {
                 //Mapeando Erros
                 .and()
                     .exceptionHandling()
-                    .accessDeniedPage("/acesso-negado");
+                    .accessDeniedPage("/acesso-negado")
+                .and().rememberMe();
 
         return http.build();
     }

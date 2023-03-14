@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -172,4 +174,34 @@ public class UsuarioController {
 
         return "redirect:/login";
     }
+
+    @GetMapping("/p/redefinir/senha")
+    public String pedidoRedefinirSenha(){
+        return "usuario/pedido-recuperar-senha";
+    }
+
+    @GetMapping("/p/recuperar/senha")
+    public String redefinirSenha(String email, ModelMap map) throws MessagingException {
+        service.pedidoRedefinicaoSenha(email);
+        map.addAttribute("sucesso", "Em instates você receberá um email para " +
+                "prosseguir com a redefinição de sua senha.");
+        map.addAttribute("usuario", new Usuario(email));
+        return "usuario/recuperar-senha";
+    }
+
+    @PostMapping("/p/nova/senha")
+    public String confirmacaoDeRedefinicaoDeSenha(Usuario user, ModelMap map){
+        Usuario u = service.buscarPorEmail(user.getEmail());
+        if(!user.getCodigoVerificador().equals(u.getCodigoVerificador())){
+            map.addAttribute("falha", "Código verificador não confere.");
+            return "usuario/recuperar-senha";
+        }
+        u.setCodigoVerificador(null);
+        service.alterarSenha(u, user.getSenha());
+        map.addAttribute("alerta", "sucesso");
+        map.addAttribute("titulo", "Senha redefinida!");
+        map.addAttribute("texto", "Você já pode logar no sistema.");
+        return "login";
+    }
+
 }

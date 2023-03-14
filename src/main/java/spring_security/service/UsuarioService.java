@@ -19,6 +19,7 @@ import spring_security.domain.Usuario;
 import spring_security.repository.UsuarioRepository;
 import spring_security.web.exception.AcessoNegadoException;
 import spring_security.web.exception.UserNotFound;
+import spring_security.web.util.RandomAlphanumeric;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -132,4 +133,16 @@ public class UsuarioService implements UserDetailsService {
         repo.save(user);
     }
 
+    @Transactional(readOnly = false)
+    public void pedidoRedefinicaoSenha(String email) throws MessagingException {
+        Usuario user = buscarPorEmailEAtivo(email).orElseThrow(
+                () -> new UsernameNotFoundException("Usuario " + email + " não encontrado!")
+        );
+
+        String verificador = RandomAlphanumeric.generateRandomAlphaNumeric(6);
+
+        user.setCodigoVerificador(verificador);
+
+        emailService.enviarPedidoRedefinicaoSenha(email, verificador);
+    }
 }
